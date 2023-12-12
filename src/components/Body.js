@@ -1,4 +1,4 @@
-import ResturantCard from "./ResturantCard";
+import ResturantCard, { withPromotedResturant } from "./ResturantCard";
 import { useEffect, useState } from "react";
 import Shimmer from './Shimmer'
 import { Link } from "react-router-dom";
@@ -13,8 +13,9 @@ const Body = () => {
 
   const [searchText, setSearchText] = useState('');
 
+  const ResturantCardPromoted = withPromotedResturant(ResturantCard);
+
   useEffect(() => {
-    console.log('useEffect Called')
     fetchData();
   }, []);
 
@@ -26,6 +27,7 @@ const Body = () => {
     // Optional Chaning
    setListOfResturant(json?.data?.cards[5]?.card?.card?.gridElements?.infoWithStyle?.restaurants);
    setFilteredResturants(json?.data?.cards[5]?.card?.card?.gridElements?.infoWithStyle?.restaurants);
+   console.log(json?.data?.cards[5]?.card?.card?.gridElements?.infoWithStyle?.restaurants);
   }
   
   const onlineStatus = useOnlineStatus();
@@ -38,12 +40,12 @@ const Body = () => {
 
   return listOfResturants.length === 0 ? <Shimmer/> : (
     <div className="body">
-      <div className="filter">
-        <div className="search">
-          <input type="text" className="search-box" value={searchText} onChange={(e) => {
+      <div className="flex">
+        <div className="p-4 m-4">
+          <input type="text" className="border border-solid border-black" value={searchText} onChange={(e) => {
             setSearchText(e.target.value);
           }}></input>
-          <button className="search-btn" onClick={() => {
+          <button className="px-4 py-2 m-4 bg-green-100 rounded-lg" onClick={() => {
             const filteredResturants = listOfResturants.filter((res) => res.info.name.toLowerCase().includes(searchText.toLowerCase()));
             setFilteredResturants(filteredResturants);
           }}
@@ -51,15 +53,19 @@ const Body = () => {
             Search
           </button>
         </div>
-        <button className="filter-btn" onClick={() => {
+        <div className="p-4 m-4 flex items-center">
+        <button className="px-4 py-4 bg-gray-100 rounded-lg" onClick={() => {
           // Filter logic here
           const filteredList = listOfResturants.filter(res=> res.info.avgRating > 4);
            setListOfResturant(filteredList);  
         }}>Top Rated Resturants</button>
+        </div>
       </div>
-      <div className="res-container">
+      <div className="flex flex-wrap">
         {
-          filteredResturants.map((resturant) => (<Link key={resturant.info.id} to={"resturant/"+resturant.info.id}><ResturantCard resData={resturant}/></Link>))
+          filteredResturants.map((resturant) => (<Link key={resturant.info.id} to={"resturant/"+resturant.info.id}>
+              { resturant.info.avgRating > 4.4 ? (<ResturantCardPromoted resData={resturant}/>) : (<ResturantCard resData={resturant}/>) }
+            </Link>))
         } 
       </div>
     </div>
