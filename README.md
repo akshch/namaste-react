@@ -66,3 +66,12 @@ import { Component } from 'path';
 
 - Client Side Routing
 - Server Side Routing
+
+# Resux Tookit
+
+- Install @reductjs/toolkit and react-redux
+- Build our store
+- Connect our store to our app
+- Slice (cartslice)
+- dispatch(action)
+- Selector
